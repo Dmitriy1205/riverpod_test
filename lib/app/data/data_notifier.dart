@@ -5,22 +5,9 @@ import '../../core/constants/constants.dart';
 import 'data_entity.dart';
 
 class DataNotifier extends StateNotifier<DataEntity> {
-  DataNotifier() : super(DataEntity(status: Status.initial)) {
-    getData();
-  }
+  DataNotifier() : super(DataEntity(status: Status.initial));
 
   DataRepository repo = DataRepository();
-
-  Future<void> getData() async {
-    state = state.copyWith(status: Status.loading);
-    try {
-      final data = await repo.fetchData();
-
-      state = state.copyWith(status: Status.loading, data: data);
-    } on Exception catch (e) {
-      state = state.copyWith(status: Status.error);
-    }
-  }
 
   void getPosition(double position) =>
       state = state.copyWith(currentPosition: position);

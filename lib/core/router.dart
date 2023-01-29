@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test/app/presentation/home_screen.dart';
-import 'package:riverpod_test/app/provider.dart';
 
 import '../app/presentation/about_screen.dart';
 import '../app/presentation/saved_screen.dart';
@@ -28,7 +27,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.home,
             builder: (_, __) {
-              dataNotifierProvider;
+
               return const HomeScreen();},
           ),
           GoRoute(

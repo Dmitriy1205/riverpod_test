@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_test/app/model/data_model.dart';
+
+final repositoryProvider = Provider<DataRepository>((ref) => DataRepository());
 
 class DataRepository {
   final String endpoint =

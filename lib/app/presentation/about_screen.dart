@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,24 +17,109 @@ class AboutScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dataNotifierProvider.notifier).state;
     final provider = ref.watch(dataNotifierProvider.notifier);
-    final List<Image> pic = List.generate(
-      state.data!.length,
-          (index) => Image.network(
-        state.data![index].fileName!,
-        scale: 2,
-        fit: BoxFit.fill,
-        // height: MediaQuery.of(context).size.height / 4,
-        filterQuality: FilterQuality.high,
-      ),
-    );
+    final data = ref.watch(dataProvider);
+
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
         Column(
           children: [
-            ReusableWidget.imageSlider(context, state, pic, provider),
+            data.when(
+              data: (items) {
+                final List<Image> pic = List.generate(
+                  items.length,
+                      (index) =>
+                      Image.network(
+                        items[index].fileName!,
+                        scale: 2,
+                        fit: BoxFit.fill,
+                        // height: MediaQuery.of(context).size.height / 4,
+                        filterQuality: FilterQuality.high,
+                      ),
+                );
+                return Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height / 2.6,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
+                      child: CarouselSlider(
+                        items: pic,
+                        options: CarouselOptions(
+                            aspectRatio: 1,
+                            scrollDirection: Axis.horizontal,
+                            scrollPhysics: const ClampingScrollPhysics(),
+                            viewportFraction: 1,
+                            enableInfiniteScroll: false,
+                            onScrolled: (item) {
+                              double validPosition(double position) {
+                                if (position >= items.length) return 0;
+                                if (position < 0) {
+                                  return items.length - 1.0;
+                                }
+                                return position;
+                              }
+
+                              updatePosition(double position) {
+                                provider.getPosition(position);
+
+                                validPosition(provider.state.currentPosition!);
+                              }
+
+                              updatePosition(item!);
+                            }),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 20,
+                      // top: 40,
+                      child: DotsIndicator(
+                        axis: Axis.horizontal,
+                        dotsCount: items.isEmpty ? 1 : items.length,
+                        position: provider.state.currentPosition!,
+                        decorator: const DotsDecorator(
+                            spacing: EdgeInsets.all(2),
+                            shape: CircleBorder(
+                                side: BorderSide(color: Colors.white)),
+                            size: Size(13, 11),
+                            activeSize: Size(13, 11),
+                            color: Colors.transparent,
+                            activeColor: Colors.white),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              error: (err, s) => SizedBox(height: MediaQuery
+                  .of(context)
+                  .size
+                  .height / 2.6,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,child: Text(err.toString()),),
+              loading: () =>
+                  SizedBox(
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 2.6,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+            ),
             Padding(
               padding: const EdgeInsets.only(
                 left: 18,

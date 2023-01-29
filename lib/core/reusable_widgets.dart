@@ -1,10 +1,4 @@
-import 'package:carousel_slider/carousel_options.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-
-import '../app/data/data_entity.dart';
-import '../app/data/data_notifier.dart';
 import 'constants/constants.dart';
 
 class ReusableWidget {
@@ -99,9 +93,9 @@ class ReusableWidget {
             const SizedBox(
               height: 10,
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 50),
-              child: const Text(
+            const Padding(
+              padding: EdgeInsets.only(right: 50),
+              child: Text(
                 AppText.review,
                 style: TextStyle(fontSize: 18),
               ),
@@ -149,67 +143,5 @@ class ReusableWidget {
       ),
     );
   }
-  static imageSlider(BuildContext context, DataEntity state, List<Image> pic, DataNotifier provider) {
 
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-
-        SizedBox(
-          height: MediaQuery.of(context).size.height / 2.6,
-          width: MediaQuery.of(context).size.width,
-          child: state.data! == null
-              ? ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Container(
-              color: Colors.black,
-            ),
-          )
-              : CarouselSlider(
-            items: pic,
-            options: CarouselOptions(
-                aspectRatio: 1,
-                scrollDirection: Axis.horizontal,
-                scrollPhysics: const ClampingScrollPhysics(),
-                viewportFraction: 1,
-                enableInfiniteScroll: false,
-                onScrolled: (item) {
-                  double validPosition(double position) {
-                    if (position >= state.data!.length) return 0;
-                    if (position < 0) {
-                      return state.data!.length - 1.0;
-                    }
-                    return position;
-                  }
-
-                  updatePosition(double position) {
-                    provider.getPosition(position);
-
-                    validPosition(state.currentPosition!);
-                  }
-
-                  updatePosition(item!);
-                }),
-          ),
-        ),
-        Positioned(
-          bottom: 20,
-          // top: 40,
-          child: DotsIndicator(
-            axis: Axis.horizontal,
-            dotsCount: state.data!.isEmpty ? 1 : state.data!.length,
-            position: state.currentPosition!,
-            decorator: const DotsDecorator(
-                spacing: EdgeInsets.all(2),
-                shape:
-                CircleBorder(side: BorderSide(color: Colors.white)),
-                size: Size(13, 11),
-                activeSize: Size(13, 11),
-                color: Colors.transparent,
-                activeColor: Colors.white),
-          ),
-        ),
-      ],
-    );
-  }
 }
